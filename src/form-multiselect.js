@@ -42,14 +42,16 @@ export default function(container=document) {
       drpdown = item.querySelector('.dropdown-menu'),
       closeOnClick = item.hasAttribute('data-close-on-click');
 
-    item.querySelectorAll('[type="checkbox"], [type="radio"]').forEach( el => {
-      el.addEventListener('click', () => {
+    item.addEventListener('click', e => {
+
+      if(['checkbox', 'radio'].indexOf(e.target.type) !== -1) {
         setMultiselectPlaceholder(item);
         if(closeOnClick) {
           btn.click();
         }
-      }, false);
-    });
+      }
+
+    }, false);
 
 
     btn.addEventListener('click', () => {
@@ -57,6 +59,16 @@ export default function(container=document) {
       let menu_on = drpdown.classList.contains('show');
       btn.classList.toggle('show', menu_on);
       btn.setAttribute('aria-expanded', menu_on);
+    }, false);
+
+    // click outside
+    document.body.addEventListener('click', e => {
+
+      if(drpdown.classList.contains('show') && e.target.closest('.form-multiselect') !== item) {
+        btn.click();
+        setMultiselectPlaceholder(item);
+      }
+
     }, false);
 
 
